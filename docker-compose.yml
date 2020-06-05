@@ -1,1 +1,47 @@
-
+version: '3.7'
+services:
+  # database containers, one for each db
+  database1:
+    image: postgres:10.0-alpine
+    environment:
+      - POSTGRES_USER=dexuser
+      - POSTGRES_PASSWORD=Test@123
+      - POSTGRES_DB=HelloDjangoDB
+    volumes:
+      - database1_volume:/var/lib/postgresql/data
+    networks:
+      - db_network
+  # web container, with django + gunicorn
+  djangoapp:
+    image: abhinav10p/dj-djangoapp:latest
+    environment:
+      - DJANGO_SETTINGS_MODULE
+    networks:
+      - db_network
+      - nginx_network
+    depends_on:
+      - database1
+    volumes:
+      - static:/usr/src/HelloDjango/static
+      - media:/usr/src/HelloDjango/media
+  # reverse proxy container (nginx)
+  nginx:
+    image: abhinav10p/dj-nginx:latest
+    ports:
+      - 8000:80
+    networks:
+      - nginx_network
+    depends_on:
+      - djangoapp
+    volumes:
+      - static:/usr/src/HelloDjango/static
+      - media:/usr/src/HelloDjango/media
+networks:
+  db_network:
+    driver: bridge
+  nginx_network:
+    driver: bridge
+volumes:
+  database1_volume:
+  static:
+  media:
