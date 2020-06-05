@@ -34,6 +34,7 @@ services:
     depends_on:
       - djangoapp
     volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - static:/usr/src/HelloDjango/static
       - media:/usr/src/HelloDjango/media
 networks:
