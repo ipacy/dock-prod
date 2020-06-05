@@ -26,17 +26,17 @@ services:
       - media:/usr/src/HelloDjango/media
   # reverse proxy container (nginx)
   nginx:
-    image: abhinav10p/dj-nginx:latest
+    image: nginx:1.19.0-alpine
     ports:
       - 8000:80
-    networks:
-      - nginx_network
-    depends_on:
-      - djangoapp
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - static:/usr/src/HelloDjango/static
       - media:/usr/src/HelloDjango/media
+    networks:
+      - nginx_network
+    depends_on:
+      - djangoapp
 networks:
   db_network:
     driver: bridge
